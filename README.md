@@ -141,3 +141,9 @@ created locally and must not be uploaded to GitHub.
 
 - llama.cpp: https://github.com/ggml-org/llama.cpp
 - Qwen model: https://huggingface.co/Qwen/Qwen3-30B-A3B-GGUF
+
+## License
+
+The setup and launcher code in this repository is released under the
+[MIT License](LICENSE). Downloaded models and llama.cpp remain subject to their
+respective upstream licenses.
