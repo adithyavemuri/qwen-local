@@ -1,0 +1,88 @@
+{
+  "default": "qwen3.5-4b",
+  "runtime": {
+    "ref": "v0.7.0",
+    "commit": "620d2225cc436ab0b001e3200e590e3b286ef9ab",
+    "vulkan_linux": {
+      "tag": "b11669",
+      "archives": [
+        {
+          "filename": "llama-b11669-bin-ubuntu-vulkan-x64.tar.gz",
+          "size_bytes": 30497889,
+          "sha256": "e8709e5ba6c1b093dea7f3de57f4aba842f9a188fba6b465782d65d6fcfa4d9f"
+        }
+      ]
+    }
+  },
+  "tools": {
+    "cmake": {
+      "version": "3.31.6",
+      "filename": "cmake-3.31.6-linux-x86_64.tar.gz",
+      "url": "https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6-linux-x86_64.tar.gz",
+      "size_bytes": 55010959,
+      "sha256": "5a1133ff103c71eb5120e2cc3de922733e7d8a26a98ae716397e8676adb367bf"
+    }
+  },
+  "models": {
+    "qwen3.5-4b": {
+      "name": "Qwen3.5-4B Q4_K_M (compact)",
+      "notes": "Compact general assistant; a sensible starting point. GPU memory still depends on context.",
+      "license": "Apache-2.0",
+      "original_model": "https://huggingface.co/Qwen/Qwen3.5-4B",
+      "repository": "unsloth/Qwen3.5-4B-GGUF",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "filename": "Qwen3.5-4B-Q4_K_M.gguf",
+      "size_bytes": 2740937888,
+      "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+      "context": 4096
+    },
+    "gemma4-e2b": {
+      "name": "Gemma 4 E2B IT Q4_0 (text chat)",
+      "notes": "Compact alternative for writing and light coding; E2B has about 5.1B total parameters including embeddings.",
+      "license": "Apache-2.0",
+      "original_model": "https://huggingface.co/google/gemma-4-E2B-it",
+      "repository": "ggml-org/gemma-4-E2B-it-GGUF",
+      "revision": "6938c58e698502037401a5f19f6905f2fb2f7dee",
+      "filename": "gemma-4-E2B-it-Q4_0.gguf",
+      "size_bytes": 2841481184,
+      "sha256": "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52",
+      "context": 4096
+    },
+    "phi4-mini": {
+      "name": "Phi-4-mini-instruct Q4_K_M (text chat)",
+      "notes": "Compact math/logic and instruction-following candidate; verify generated code and factual claims.",
+      "license": "MIT",
+      "original_model": "https://huggingface.co/microsoft/Phi-4-mini-instruct",
+      "repository": "unsloth/Phi-4-mini-instruct-GGUF",
+      "revision": "78eb92a46fc37e6b524df991ed9aca9bc6aa7b80",
+      "filename": "Phi-4-mini-instruct-Q4_K_M.gguf",
+      "size_bytes": 2491874272,
+      "sha256": "88c00229914083cd112853aab84ed51b87bdf6b9ce42f532d8c85c7c63b1730a",
+      "context": 4096
+    },
+    "qwen3.8-27b": {
+      "name": "Qwen3.8-27B Q4_K_M (dense)",
+      "notes": "Large dense model: substantial RAM needed and CPU chat can be very slow. Not a fast-chat default.",
+      "license": "Apache-2.0",
+      "original_model": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "repository": "ggml-org/Qwen3.8-27B-GGUF",
+      "revision": "a316ea527fde32c12487be7574e2db5ac2ad2a7e",
+      "filename": "Qwen3.8-27B-Q4_K_M.gguf",
+      "size_bytes": 18973870528,
+      "sha256": "c600de0300ae8a0eb3a6c0b8b5561b8b96f16bd2c863c2a66c42de29d391a747",
+      "context": 4096
+    },
+    "qwen3-30b-a3b": {
+      "name": "Qwen3-30B-A3B Q4_K_M (legacy MoE)",
+      "notes": "Sparse model with about 3B active parameters per token, but all weights still need storage/memory.",
+      "license": "Apache-2.0",
+      "original_model": "https://huggingface.co/Qwen/Qwen3-30B-A3B",
+      "repository": "Qwen/Qwen3-30B-A3B-GGUF",
+      "revision": "e4d4bafdfb96a411a163846265362aceb0b9c63a",
+      "filename": "Qwen3-30B-A3B-Q4_K_M.gguf",
+      "size_bytes": 18556685824,
+      "sha256": "0d003f6662faee786ed5da3e31b29c978de5ae5d275c8794c606a7f3c01aa8f5",
+      "context": 4096
+    }
+  }
+}

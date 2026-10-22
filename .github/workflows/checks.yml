@@ -4,19 +4,42 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   linux:
+    name: Linux offline tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
     steps:
       - uses: actions/checkout@v4
-      - run: bash -n setup_qwen.sh
-      - run: bash -n start_qwen.sh
-      - run: python3 -m py_compile run_server.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Shell syntax
+        run: bash -n setup_qwen.sh start_qwen.sh examples/chat.sh
+      - name: Offline regression tests (no models or GPU)
+        run: python -m unittest discover -s tests -v
+      - name: Public entry points (no downloads)
+        run: |
+          python manage_models.py --list
+          python manage_models.py --install phi4-mini --dry-run
+          python run_server.py --list-models
+      - name: No generated model/build data tracked
+        run: test -z "$(git ls-files models runtime downloads logs build)"
 
-  windows:
+  windows-syntax:
+    name: Windows compatibility syntax only (not runtime validation)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
       - shell: pwsh
         run: |
           foreach ($script in @("setup_qwen.ps1", "start_qwen.ps1")) {
@@ -29,4 +52,5 @@ jobs:
               exit 1
             }
           }
-      - run: python -m py_compile run_server.py
+      - name: Python syntax only
+        run: python -m py_compile manage_models.py model_config.py model_router.py run_server.py setup_gpu.py

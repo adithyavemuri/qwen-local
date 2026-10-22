@@ -2,5 +2,6 @@ build/
 downloads/
 models/
 runtime/
+logs/
 *.log
 __pycache__/
