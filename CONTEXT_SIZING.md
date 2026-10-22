@@ -1,6 +1,6 @@
 # How automatic context sizing works
 
-The preferred default is **32,768 tokens**, not 4K. With no `--context` argument,
+The preferred default is **65,536 tokens**, not 4K. With no `--context` argument,
 the launcher reads the installed model's GGUF header and checks available memory
 before starting. There are no new Python dependencies, downloads or driver
 changes in this check. Model weights are not loaded for the estimate.
@@ -11,7 +11,7 @@ python3 run_server.py --router --context-report   # inspect only
 ./start_qwen.sh --router --context 65536          # manual override, not a fit check
 ```
 
-The default policy tries **32K → 16K → 8K**. It never chooses a larger window
+The default policy tries **64K → 32K → 16K → 8K**. It never chooses a larger window
 than the model's recorded trained context. If even 8K cannot be established
 within the RAM budget, that model is unavailable in automatic mode. A failed
 startup-model plan stops the launch with an explanation; a failed plan for a
@@ -93,7 +93,7 @@ cache quantization or offload settings are changed by the estimator.
 ## Router, IDE and current processes
 
 Every installed router model is planned independently, and only one instance
-is loaded at a time. For example, Qwen might receive 32K while Phi receives 8K.
+is loaded at a time. For example, Qwen might receive 64K while Phi receives 8K.
 The chosen values are printed and written into the generated local router INI.
 Startup sizing is a snapshot; it is not a continuous monitor when models switch.
 An explicit `--context` forces that value for all router models and bypasses
@@ -103,9 +103,10 @@ the estimator. It does not guarantee that value fits or is scientifically useful
 a preflight and is not assumed reclaimable. The launcher never kills it for you.
 Neither a YAML edit nor reloading VS Code changes an existing model allocation.
 
-Continue's `contextLength` must match each model's printed context; the launcher
-does not rewrite IDE files or read GitHub secrets. If a model falls back below
-32K, lower only that model's `contextLength` in your Continue YAML before using
+Continue's `contextLength` or Cline's custom model Context Window must match
+each model's printed context; the launcher does not rewrite IDE files or read
+GitHub secrets. If a model falls back below 64K, lower only that model's client
+context setting before using
 it and start a new conversation. Other clients may discover the server's actual
 context automatically, but do not assume they all do.
 
@@ -113,8 +114,18 @@ context automatically, but do not assume they all do.
 preferred setting, not a measured fit. `--context-report` performs only the
 read-only estimate using installed files and an existing runtime. It does not
 bootstrap a runtime, load weights, write an INI, start a server or test answers.
-An estimated fit is not an actual successful 32K inference test. Startup failures
+An estimated fit is not an actual successful 64K inference test. Startup failures
 remain visible; there is no hidden retry or claim of success after an OOM.
+
+If a request with 32,888 tokens is rejected against a 32,768-token allocation,
+raising only the client setting cannot help. Restart the model server and check
+its actual allocation. Automatic sizing can legitimately retain 32K to prefer
+full-GPU residency. To attempt 64K even in that case, explicitly pass
+`--context 65536`, accepting the additional memory/offload risk. Set the client
+window to 65,536 only after the server successfully loads that context. There
+is still a finite limit: instructions, tools, history, retrieved files and the
+answer all share the allocated window. Larger context does not repair a client
+that miscounts tokens or fails to compact long tool histories.
 
 ## Primary sources and verification
 

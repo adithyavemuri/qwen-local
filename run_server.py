@@ -113,7 +113,7 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--context", type=int,
-                        help="Manual context override, bypassing automatic 32K/16K/8K memory sizing")
+                        help="Manual context override, bypassing automatic 64K/32K/16K/8K memory sizing")
     parser.add_argument("--context-report", action="store_true",
                         help="Estimate model contexts from free memory; no downloads, writes or server start")
     parser.add_argument("--threads", type=int, default=min(8, os.cpu_count() or 1))
@@ -189,7 +189,7 @@ def main() -> None:
         print("Browser model switching enabled: installed models only, one loaded at a time.")
     if arguments.dry_run:
         if arguments.context is None:
-            print('Dry-run shows the preferred 32K setting; automatic hardware sizing runs at startup. '
+            print('Dry-run shows the preferred 64K setting; automatic hardware sizing runs at startup. '
                   'Use --context-report for a read-only estimate.')
         return
     if arguments.open_browser:

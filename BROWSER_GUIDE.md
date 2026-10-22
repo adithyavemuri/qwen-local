@@ -94,22 +94,22 @@ through the same `/v1/chat/completions` API, with the preset key as `model`.
 ## Common adjustments
 
 Qwen3.5-4B Q4_K_M is the default; its first download is about 2.74 GB. The larger
-27B preset remains selectable. The server uses one slot and prefers a 32,768-token
-context, with automatic memory-based 16K/8K fallbacks. Thinking follows the model's
+27B preset remains selectable. The server uses one slot and prefers a 65,536-token
+context, with automatic memory-based 32K/16K/8K fallbacks. Thinking follows the model's
 own default unless you select `--thinking` explicitly.
 
-To force 32K for every installed model instead of automatic sizing, stop the
+To force 64K for every installed model instead of automatic sizing, stop the
 existing server and start it with an explicit override:
 
 ```bash
-./start_qwen.sh --router --context 32768 --thinking off
+./start_qwen.sh --router --context 65536 --thinking off
 ```
 
 `--context` overrides each generated router preset, not only the parent server,
 and bypasses automatic context sizing. Without it, startup checks each installed
 model separately using the [documented estimate](CONTEXT_SIZING.md). Match the
 context setting in any connected IDE client to the running server. A larger
-window consumes more memory and may reduce speed; 32K performance is not
+window consumes more memory and may reduce speed; 64K performance is not
 verified for every catalog model on every machine.
 
 Run `python3 run_server.py --router --context-report` for a read-only estimate

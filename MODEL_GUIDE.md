@@ -12,7 +12,7 @@ Qwen3.5-4B is the compact general default. Gemma 4 E2B and Phi-4-mini are compac
 alternatives. The 27B and 30B models need much more storage and memory; sufficient
 RAM does not make them fast. Runtime/cache memory is additional to the listed
 weight size. GPU fit depends on free VRAM, context and quantization. Start with
-the automatic context preflight (32K preferred, 16K/8K fallbacks), then benchmark
+the automatic context preflight (64K preferred, 32K/16K/8K fallbacks), then benchmark
 your actual tasks. See [context sizing](CONTEXT_SIZING.md) for assumptions and
 limits. `--context N` is an explicit override, not a fit guarantee.
 
@@ -47,7 +47,7 @@ Edit `models.json` under `models`, adding a unique key and these fields:
   "filename": "your-model-Q4_K_M.gguf",
   "size_bytes": 123456789,
   "sha256": "REPLACE_WITH_THE_64_CHARACTER_FILE_SHA256",
-  "context": 32768
+  "context": 65536
 }
 ```
 

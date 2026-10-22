@@ -14,8 +14,8 @@ import subprocess
 
 GIB = 1024**3
 MIB = 1024**2
-PREFERRED_CONTEXT = 32768
-CANDIDATES = (32768, 16384, 8192)
+PREFERRED_CONTEXT = 65536
+CANDIDATES = (65536, 32768, 16384, 8192)
 
 
 def gguf_metadata(path: Path) -> dict:
@@ -266,7 +266,8 @@ def describe(plans: dict) -> None:
         print(f"  {key}: {plan['context']:,} tokens; KV {plan['kv_bytes'] / GIB:.2f} GiB; "
               f"weights+cache+margins {plan['estimated_bytes'] / GIB:.2f} GiB; {plan['mode']}", flush=True)
         if plan['context'] != PREFERRED_CONTEXT:
-            print(f"    Preferred 32K was reduced to {plan['context']:,}; match the IDE context to this value.",
+            print(f"    Preferred {PREFERRED_CONTEXT:,} was reduced to {plan['context']:,}; "
+                  'match the IDE context to this value.',
                   flush=True)
         for note in plan['notes']:
             print(f'    {note}', flush=True)

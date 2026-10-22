@@ -71,15 +71,15 @@ directly to the local server. Use `-NoBrowser` or `-Port 18080` when needed.
 .\start_qwen.ps1 -Router -Thinking off
 ```
 
-With `-Context` omitted, the Python launcher prefers 32K and estimates memory
-before starting, with 16K/8K fallbacks. On the provided Windows CPU build this
+With `-Context` omitted, the Python launcher prefers 64K and estimates memory
+before starting, with 32K/16K/8K fallbacks. On the provided Windows CPU build this
 uses available physical RAM, not GPU memory. Inspect without starting a model:
 
 ```powershell
 python run_server.py --router --backend cpu --context-report
 ```
 
-`-Context 32768` forces a value and bypasses automatic sizing. Real Windows
+`-Context 65536` forces a value and bypasses automatic sizing. Real Windows
 hardware probing and model startup remain untested; syntax support and mocked
 tests are not end-to-end Windows validation.
 

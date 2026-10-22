@@ -1,8 +1,8 @@
 # Current limitations
 
 - Automatic context sizing is an estimate from model metadata and a snapshot
-  of available RAM/GPU memory, not a real allocation test. It prefers 32K,
-  then 16K/8K, and reports per-model choices. Compute/recurrent allowances and
+  of available RAM/GPU memory, not a real allocation test. It prefers 64K,
+  then 32K/16K/8K, and reports per-model choices. Compute/recurrent allowances and
   headroom are heuristics. Gemma sliding-window caches are conservatively
   charged at full context; unrecognized architectures require a manual override.
   Read [CONTEXT_SIZING.md](CONTEXT_SIZING.md) before interpreting a fit report.

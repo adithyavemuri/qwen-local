@@ -183,9 +183,9 @@ slow. Up to eight CPU threads are used by default; adjust `--threads` to measure
 what works best on your machine. Qwen3.8-27B is dense and can be considerably slower than the old
 MoE; model parameter count alone does not predict speed. Enough RAM to load
 weights does not guarantee a fast response. Context/cache and runtime buffers
-need additional memory. The preferred default is **32,768 context tokens** with
+need additional memory. The preferred default is **65,536 context tokens** with
 one slot. Startup estimates memory from the actual GGUF metadata and available
-RAM/selected GPU memory, falling back to 16K or 8K when appropriate. A partial
+RAM/selected GPU memory, falling back to 32K, 16K or 8K when appropriate. A partial
 GPU-offload estimate is clearly distinguished from a full GPU fit; this is not
 an allocation guarantee. See [context sizing](CONTEXT_SIZING.md).
 

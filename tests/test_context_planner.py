@@ -74,11 +74,27 @@ class ContextPlannerTests(unittest.TestCase):
         self.assertEqual(estimate['kv_bytes'], 15 * 32768 * 1 * (512 + 512) * 2)
         self.assertTrue(estimate['notes'])
 
-    def test_prefer_32k_with_sufficient_memory(self):
+    def test_prefer_64k_with_sufficient_memory(self):
+        gpu = {'free_bytes': 8 * planner.GIB, 'total_bytes': 8 * planner.GIB}
+        plan = planner.choose_context(metadata('qwen35'), 2740937888, 50 * planner.GIB, gpu)
+        self.assertEqual(plan['context'], 65536)
+        self.assertEqual(plan['preferred_context'], 65536)
+        self.assertEqual(plan['mode'], 'estimated full GPU fit')
+
+    def test_fallback_from_64k_to_32k_when_gpu_budget_is_tighter(self):
         gpu = {'free_bytes': 6 * planner.GIB, 'total_bytes': 6 * planner.GIB}
         plan = planner.choose_context(metadata('qwen35'), 2740937888, 50 * planner.GIB, gpu)
         self.assertEqual(plan['context'], 32768)
+        self.assertEqual(plan['preferred_context'], 65536)
         self.assertEqual(plan['mode'], 'estimated full GPU fit')
+
+    def test_64k_cache_formula_doubles_32k_without_changing_weights(self):
+        for arch in ('qwen35', 'phi3'):
+            with self.subTest(architecture=arch):
+                small = planner.memory_estimate(metadata(arch), 3 * planner.GIB, 32768)
+                large = planner.memory_estimate(metadata(arch), 3 * planner.GIB, 65536)
+                self.assertEqual(large['kv_bytes'], 2 * small['kv_bytes'])
+                self.assertEqual(large['weights_bytes'], small['weights_bytes'])
 
     def test_gpu_fallbacks_are_16k_then_8k(self):
         # Phi KV is 4/2/1 GiB at 32/16/8K. Include all overhead and headroom.
@@ -90,11 +106,11 @@ class ContextPlannerTests(unittest.TestCase):
 
     def test_cpu_uses_ram_budget_and_larger_model_is_explicitly_partial(self):
         plan = planner.choose_context(metadata(), 2 * planner.GIB, 50 * planner.GIB)
-        self.assertEqual(plan['context'], 32768)
+        self.assertEqual(plan['context'], 65536)
         self.assertEqual(plan['mode'], 'estimated CPU/RAM fit')
         gpu = {'free_bytes': 6 * planner.GIB, 'total_bytes': 6 * planner.GIB}
         plan = planner.choose_context(metadata('qwen35'), 18 * planner.GIB, 50 * planner.GIB, gpu)
-        self.assertEqual(plan['context'], 32768)
+        self.assertEqual(plan['context'], 65536)
         self.assertIn('partial GPU offload', plan['mode'])
 
     def test_unknown_gpu_does_not_claim_gpu_fit(self):
@@ -167,15 +183,15 @@ class ContextPlannerTests(unittest.TestCase):
             path.write_bytes(fixture(metadata('qwen35')))
             plans = planner.plan_models({'small': path, 'missing': path.with_name('missing.gguf')},
                                         50 * planner.GIB)
-            self.assertEqual(plans['small']['context'], 32768)
+            self.assertEqual(plans['small']['context'], 65536)
             self.assertIsNone(plans['missing']['context'])
 
     def test_main_passes_individual_contexts_to_router_and_explicit_override_skips_plan(self):
-        plans = {'qwen3.5-4b': {'context': 32768}, 'phi4-mini': {'context': 8192}}
+        plans = {'qwen3.5-4b': {'context': 65536}, 'phi4-mini': {'context': 8192}}
         for explicit in (False, True):
             args = ['run_server.py', '--router', '--thinking', 'off']
             if explicit:
-                args += ['--context', '65536']
+                args += ['--context', '131072']
             with patch.dict(os.environ, {}, clear=True), \
                  patch.object(sys, 'argv', args), \
                  patch.object(run_server, 'command', return_value=['fake-server']), \
@@ -187,10 +203,10 @@ class ContextPlannerTests(unittest.TestCase):
                 run_server.main()
             if explicit:
                 planned.assert_not_called()
-                self.assertEqual(prepare.call_args.args[3:], (65536, None))
+                self.assertEqual(prepare.call_args.args[3:], (131072, None))
             else:
                 planned.assert_called_once()
-                self.assertEqual(prepare.call_args.args[3:], (32768, {'qwen3.5-4b': 32768, 'phi4-mini': 8192}))
+                self.assertEqual(prepare.call_args.args[3:], (65536, {'qwen3.5-4b': 65536, 'phi4-mini': 8192}))
 
     def test_context_report_does_not_setup_write_or_start(self):
         with patch.object(sys, 'argv', ['run_server.py', '--context-report', '--setup-if-needed']), \

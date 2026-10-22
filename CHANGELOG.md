@@ -1,5 +1,12 @@
 # Changes
 
+## 64K preferred context — unreleased
+
+- Raised the preferred context to 65,536 tokens, with 32K/16K/8K fallbacks.
+- Updated launch messages, model defaults and client-configuration guidance.
+- Added regression checks for 64K selection, 32K fallback and cache scaling.
+- No cache quantization, concurrency or custom offload algorithm was added.
+
 ## Automatic context preflight — unreleased
 
 - Changed catalog preferred contexts from 4K to 32K.
