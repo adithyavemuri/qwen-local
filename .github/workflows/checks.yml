@@ -53,4 +53,4 @@ jobs:
             }
           }
       - name: Python syntax only
-        run: python -m py_compile manage_models.py model_config.py model_router.py run_server.py setup_gpu.py
+        run: python -m py_compile manage_models.py model_config.py model_router.py run_server.py setup_gpu.py context_planner.py

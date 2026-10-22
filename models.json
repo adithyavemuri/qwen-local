@@ -34,7 +34,7 @@
       "filename": "Qwen3.5-4B-Q4_K_M.gguf",
       "size_bytes": 2740937888,
       "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
-      "context": 4096
+      "context": 32768
     },
     "gemma4-e2b": {
       "name": "Gemma 4 E2B IT Q4_0 (text chat)",
@@ -46,7 +46,7 @@
       "filename": "gemma-4-E2B-it-Q4_0.gguf",
       "size_bytes": 2841481184,
       "sha256": "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52",
-      "context": 4096
+      "context": 32768
     },
     "phi4-mini": {
       "name": "Phi-4-mini-instruct Q4_K_M (text chat)",
@@ -58,7 +58,7 @@
       "filename": "Phi-4-mini-instruct-Q4_K_M.gguf",
       "size_bytes": 2491874272,
       "sha256": "88c00229914083cd112853aab84ed51b87bdf6b9ce42f532d8c85c7c63b1730a",
-      "context": 4096
+      "context": 32768
     },
     "qwen3.8-27b": {
       "name": "Qwen3.8-27B Q4_K_M (dense)",
@@ -70,7 +70,7 @@
       "filename": "Qwen3.8-27B-Q4_K_M.gguf",
       "size_bytes": 18973870528,
       "sha256": "c600de0300ae8a0eb3a6c0b8b5561b8b96f16bd2c863c2a66c42de29d391a747",
-      "context": 4096
+      "context": 32768
     },
     "qwen3-30b-a3b": {
       "name": "Qwen3-30B-A3B Q4_K_M (legacy MoE)",
@@ -82,7 +82,7 @@
       "filename": "Qwen3-30B-A3B-Q4_K_M.gguf",
       "size_bytes": 18556685824,
       "sha256": "0d003f6662faee786ed5da3e31b29c978de5ae5d275c8794c606a7f3c01aa8f5",
-      "context": 4096
+      "context": 32768
     }
   }
 }

@@ -1,5 +1,18 @@
 # Changes
 
+## Automatic context preflight — unreleased
+
+- Changed catalog preferred contexts from 4K to 32K.
+- Added standard-library GGUF metadata reading and model-specific FP16 cache
+  estimates, free-RAM/device probes, conservative margins and 16K/8K fallbacks.
+- Reported full-GPU, CPU and partial-offload estimates separately; unsupported
+  models cannot silently receive a claimed-safe automatic plan.
+- Fixed router context overrides and added independent per-model contexts.
+- Added `--context-report` (no downloads/model loading/config writes), retained
+  explicit `--context` overrides and added offline analytical/regression tests.
+- Documented formula sources, safety assumptions, IDE context matching and
+  untested Windows hardware/runtime behavior. No driver changes are involved.
+
 ## Multi-model beta update — 2026-10-22
 
 - Added selectable, pinned Qwen3.5-4B, Gemma 4 E2B and Phi-4-mini weights.

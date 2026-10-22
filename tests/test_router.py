@@ -45,6 +45,38 @@ class RouterTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not installed"):
             model_router.configuration(self.root, "missing")
 
+    def test_context_override_applies_to_every_installed_model(self):
+        content = model_router.configuration(self.root, context=32768)
+        self.assertEqual(content.count("ctx-size = 32768"), 2)
+        self.assertNotIn("ctx-size = 4096", content)
+        # Omitting the override still preserves individual catalog defaults.
+        self.specs["large"]["context"] = 8192
+        defaults = model_router.configuration(self.root)
+        self.assertIn("ctx-size = 4096", defaults)
+        self.assertIn("ctx-size = 8192", defaults)
+
+    def test_prepare_writes_the_context_override(self):
+        path = model_router.prepare(self.root, 18080, "large", context=32768)
+        self.assertEqual(path.read_text(), model_router.configuration(self.root, "large", 32768))
+        self.assertEqual(path.read_text().count("ctx-size = 32768"), 2)
+
+    def test_invalid_context_is_rejected_before_writing(self):
+        for value in (0, -1, True, "32768"):
+            with self.subTest(context=value), self.assertRaisesRegex(ValueError, "positive integer"):
+                model_router.prepare(self.root, 18080, context=value)
+        self.assertFalse((self.root / "runtime").exists())
+
+    def test_per_model_plans_override_parent_and_omit_unavailable_models(self):
+        contexts = {'small': 32768, 'large': 16384}
+        path = model_router.prepare(self.root, 18080, 'small', context=32768, contexts=contexts)
+        content = path.read_text()
+        self.assertIn('ctx-size = 32768', content)
+        self.assertIn('ctx-size = 16384', content)
+        self.assertNotIn('[missing]', content)
+        self.assertNotIn('[large]', model_router.configuration(self.root, contexts={'small': 16384}))
+        with self.assertRaisesRegex(ValueError, 'positive integers'):
+            model_router.configuration(self.root, contexts={'small': 0})
+
     def test_explicit_startup_and_fallback_if_default_is_missing(self):
         content = model_router.configuration(self.root, "large")
         self.assertIn("[large]\nmodel =", content)
@@ -85,10 +117,13 @@ class RouterTests(unittest.TestCase):
         server = self.root / "server"
         server.touch()
         args = argparse.Namespace(preset=None, model=None, server=server, backend="cpu", router=True,
-                                  host="127.0.0.1", port=8080, context=4096, threads=8,
+                                  host="127.0.0.1", port=8080, context=32768, threads=8,
                                   gpu_layers=None, thinking="off")
-        with patch.object(run_server, "__file__", str(self.root / "run_server.py")):
+        with patch.object(run_server, "__file__", str(self.root / "run_server.py")), \
+             patch.object(model_router, "configuration", wraps=model_router.configuration) as configured:
             result = run_server.command(args)
+        configured.assert_called_once_with(self.root, None, 32768)
+        self.assertEqual(result[result.index("--ctx-size") + 1], "32768")
         self.assertIn("--models-preset", result)
         self.assertEqual(result[result.index("--models-max") + 1], "1")
         self.assertIn("--offline", result)

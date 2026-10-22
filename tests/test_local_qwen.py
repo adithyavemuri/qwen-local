@@ -124,7 +124,7 @@ class ModelTests(unittest.TestCase):
             with patch.object(run_server, "__file__", str(root / "run_server.py")):
                 result = run_server.command(args)
             self.assertEqual(result[result.index("--model") + 1], str(model))
-            self.assertEqual(result[result.index("--ctx-size") + 1], "4096")
+            self.assertEqual(result[result.index("--ctx-size") + 1], "32768")
             self.assertEqual(result[result.index("--parallel") + 1], "1")
             self.assertEqual(result[result.index("--reasoning") + 1], "off")
             self.assertEqual(result[result.index("--cors-origins") + 1], "localhost")
@@ -229,6 +229,7 @@ class ModelTests(unittest.TestCase):
 
     def test_installed_gpu_does_not_trigger_unnecessary_cpu_build(self):
         with patch.object(run_server, "command", return_value=["fake-server"]), \
+             patch.object(run_server, "automatic_contexts", return_value={"qwen3.5-4b": {"context": 32768}}), \
              patch.object(run_server, "gpu_runtime", return_value={"executable": Path("fake-server")}), \
              patch.object(run_server, "runtime_ready", return_value=False), \
              patch.object(run_server, "model_ready", return_value=True), \

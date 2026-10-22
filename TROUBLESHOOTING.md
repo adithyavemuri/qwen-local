@@ -13,6 +13,8 @@ solve a missing prerequisite by blindly running an administrator command.
 | Port already in use | Stop your own existing server with Ctrl+C, or use `python3 run_server.py --router --port 18080`. Do not kill unrelated processes. |
 | GPU runtime fails | Use `--backend cpu`. Optional Vulkan setup needs an existing compatible driver/loader. This project does not install or upgrade drivers. |
 | Out of memory / slow generation | Choose smaller weights, reduce `--context`, close other workloads or force CPU. More CPU threads are not always faster. |
+| HTTP 400: request exceeds available context | Inspect the actual running server, not just the IDE YAML. Stop the old server, then relaunch without `--context` for automatic sizing. Match the IDE context to the printed per-model choice and start a fresh chat. |
+| Automatic context is smaller than expected | Another model server or application may occupy memory. Use `python3 run_server.py --router --context-report` to inspect estimates. Do not assume system RAM is extra dedicated VRAM. `--context N` overrides the estimate at your risk. |
 | Unsupported architecture/template | A GGUF file may require a newer runtime or a corrected conversion. Keep the working runtime intact while checking compatibility. |
 | Windows execution policy blocks scripts | Use the process-only policy example in WINDOWS_GUIDE.md if permitted by your organization. Do not change machine-wide policy. |
 

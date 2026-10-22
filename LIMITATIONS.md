@@ -1,5 +1,15 @@
 # Current limitations
 
+- Automatic context sizing is an estimate from model metadata and a snapshot
+  of available RAM/GPU memory, not a real allocation test. It prefers 32K,
+  then 16K/8K, and reports per-model choices. Compute/recurrent allowances and
+  headroom are heuristics. Gemma sliding-window caches are conservatively
+  charged at full context; unrecognized architectures require a manual override.
+  Read [CONTEXT_SIZING.md](CONTEXT_SIZING.md) before interpreting a fit report.
+  CPU/partial offload can use RAM but is not equivalent to fast full-GPU inference.
+  Explicit `--context` bypasses the automatic check. The launcher does not resize
+  an existing server, edit IDE settings, or silently retry an OOM failure.
+
 - The default Qwen3.5-4B Q4_K_M GGUF download is 2.74 GB; the optional 27B is
   18.97 GB. Runtime buffers and
   the selected context/cache require additional RAM.

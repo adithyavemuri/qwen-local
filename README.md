@@ -183,7 +183,26 @@ slow. Up to eight CPU threads are used by default; adjust `--threads` to measure
 what works best on your machine. Qwen3.8-27B is dense and can be considerably slower than the old
 MoE; model parameter count alone does not predict speed. Enough RAM to load
 weights does not guarantee a fast response. Context/cache and runtime buffers
-need additional memory. Start with the default 4,096-token context and one slot.
+need additional memory. The preferred default is **32,768 context tokens** with
+one slot. Startup estimates memory from the actual GGUF metadata and available
+RAM/selected GPU memory, falling back to 16K or 8K when appropriate. A partial
+GPU-offload estimate is clearly distinguished from a full GPU fit; this is not
+an allocation guarantee. See [context sizing](CONTEXT_SIZING.md).
+
+```bash
+# Read-only estimate for installed models; no downloads or model loading:
+python3 run_server.py --router --context-report
+
+# Automatic sizing is enabled when --context is omitted:
+./start_qwen.sh --router --thinking off
+
+# An explicit value bypasses automatic sizing (you accept memory-fit risk):
+./start_qwen.sh --router --context 65536 --thinking off
+```
+
+In router mode each model may receive a different context. Match a connected
+IDE's context setting to that model's startup report; changing an IDE YAML
+does not resize an already-running server. Stop the old server first.
 
 ## Linux installation
 

@@ -62,7 +62,7 @@ On the first run, `start_qwen.ps1` invokes setup automatically. Later runs go
 directly to the local server. Use `-NoBrowser` or `-Port 18080` when needed.
 
 ```powershell
-.\start_qwen.ps1 -ModelPreset qwen3.5-4b -Thinking off -Context 4096 -Threads 8
+.\start_qwen.ps1 -ModelPreset qwen3.5-4b -Thinking off -Threads 8
 
 # Ctrl+C first, then choose a different installed model:
 .\start_qwen.ps1 -ModelPreset qwen3.8-27b -Thinking off
@@ -70,6 +70,18 @@ directly to the local server. Use `-NoBrowser` or `-Port 18080` when needed.
 # Or select installed models in the browser, with one model loaded at a time:
 .\start_qwen.ps1 -Router -Thinking off
 ```
+
+With `-Context` omitted, the Python launcher prefers 32K and estimates memory
+before starting, with 16K/8K fallbacks. On the provided Windows CPU build this
+uses available physical RAM, not GPU memory. Inspect without starting a model:
+
+```powershell
+python run_server.py --router --backend cpu --context-report
+```
+
+`-Context 32768` forces a value and bypasses automatic sizing. Real Windows
+hardware probing and model startup remain untested; syntax support and mocked
+tests are not end-to-end Windows validation.
 
 To list presets: `python .\run_server.py --list-models`. Selecting
 `qwen3-30b-a3b` explicitly downloads the old model if its weights are absent.
